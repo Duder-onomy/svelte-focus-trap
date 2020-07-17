@@ -25,8 +25,8 @@ This could be useful if you wanted to trap focus within something like a modal. 
 
 
 Todos:
-[ ] - Demo
-[ ] - Tests + Ci
+- [ ] Demo
+- [ ] Tests + Ci
 
 Installation
 ------------------------------------------------------------------------------
