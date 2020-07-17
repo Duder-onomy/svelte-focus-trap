@@ -1,6 +1,6 @@
 # svelte-focus-trap
 
-<!-- ![npm](https://img.shields.io/npm/v/ember-trap-focus) -->
+![npm](https://img.shields.io/npm/v/svelte-focus-trap)
 
 A svelte directive that will trap focus within an element.
 You can navigate child focusable elements with up, down, tab, shift + tab, alt + tab. I have attempted to match the accesibility best practices listed [here](https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.html).
