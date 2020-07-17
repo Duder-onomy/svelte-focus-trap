@@ -40,12 +40,12 @@ Usage
 
 ```html
 <script>
-  import { focus-trap } from 'svelte-focus-trap'
+  import { focusTrap } from 'svelte-focus-trap'
 </script>
 
 {#if showing}
   <div
-    use:focus-trap
+    use:focusTrap
   > 
     <!-- ...modal contents -->
   </div>
