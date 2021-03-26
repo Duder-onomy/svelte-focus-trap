@@ -1,0 +1,1 @@
+export function focusTrap(node: HTMLElement): void
