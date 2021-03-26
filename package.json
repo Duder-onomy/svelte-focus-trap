@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "svelte": "src/index.js",
+  "types": "svelte-focus-trap.d.ts",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w"
