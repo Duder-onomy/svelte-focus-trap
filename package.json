@@ -1,6 +1,6 @@
 {
   "name": "svelte-focus-trap",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "A svelte directive that will trap and wrap focus within an element.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
