@@ -1,4 +1,4 @@
-import Mousetrap from 'mousetrap';
+import 'mousetrap';
 import {
   runInSeries, 
   elementIsVisible, 
