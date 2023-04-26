@@ -1,7 +1,40 @@
 import Mousetrap from 'mousetrap';
-import { runInSeries, elementIsVisible, FOCUSABLE_ELEMENTS } from './utils.js';
 
-export function focusTrap(node) {
+interface MiddlewareContext {
+	event: Event;
+}
+
+function runInSeries(tasks) {
+	return (...initialArgs) => {
+		return tasks.reduce((memo, task) => (memo = [...[task(...memo)]]), initialArgs || []);
+	};
+}
+
+function elementIsVisible(element: HTMLElement) {
+	const computedStyle = document?.defaultView?.getComputedStyle(element, null);
+
+	return (
+		computedStyle.getPropertyValue('display') !== 'none' &&
+		computedStyle.getPropertyValue('visibility') !== 'hidden'
+	);
+}
+
+// A list of selectors to select all known focusable elements
+const FOCUSABLE_ELEMENTS = [
+	'a[href]',
+	'area[href]',
+	'input:not([disabled]):not([type="hidden"]):not([aria-hidden])',
+	'select:not([disabled]):not([aria-hidden])',
+	'textarea:not([disabled]):not([aria-hidden])',
+	'button:not([disabled]):not([aria-hidden])',
+	'iframe',
+	'object',
+	'embed',
+	'[contenteditable]',
+	'[tabindex]:not([tabindex^="-"])'
+];
+
+export function focusTrap(node: HTMLElement) {
 	const keyboardShortcuts = {
 		'alt+tab': previous,
 		end: focusLastItem,
@@ -16,7 +49,7 @@ export function focusTrap(node) {
 		Mousetrap.bind(
 			keys,
 			runInSeries([
-				(event) => ({ event }),
+				(event: Event) => ({ event }),
 				preventDefault,
 				stopPropagation,
 				getAllFocusableChildren,
@@ -26,26 +59,26 @@ export function focusTrap(node) {
 		);
 	});
 
-	function preventDefault(context) {
+	function preventDefault(context: MiddlewareContext) {
 		context.event.preventDefault();
 		return context;
 	}
 
-	function stopPropagation(context) {
+	function stopPropagation(context: MiddlewareContext) {
 		context.event.stopPropagation();
 		return context;
 	}
 
-	function getAllFocusableChildren(context) {
-		let focusables = [...node.querySelectorAll(FOCUSABLE_ELEMENTS)]; // NodeList to Array
+	function getAllFocusableChildren(context: MiddlewareContext) {
+		const focusables = [...node.querySelectorAll(FOCUSABLE_ELEMENTS)]; // NodeList to Array
 		return {
 			...context,
 			allFocusableItems: focusables.filter(elementIsVisible)
 		};
 	}
 
-	function getCurrentlyFocusedItem(context) {
-		let currentlyFocusedItem = document.activeElement;
+	function getCurrentlyFocusedItem(context: MiddlewareContext) {
+		const currentlyFocusedItem = document.activeElement;
 
 		if (currentlyFocusedItem && !node.contains(currentlyFocusedItem)) {
 			return context;
@@ -64,7 +97,7 @@ export function focusTrap(node) {
 			return;
 		}
 
-		let currentlyFocusedIndex = allFocusableItems.indexOf(currentlyFocusedItem);
+		const currentlyFocusedIndex = allFocusableItems.indexOf(currentlyFocusedItem);
 
 		// If we have focus on the last one, give focus on the first.
 		if (allFocusableItems.length - 1 === currentlyFocusedIndex) {
@@ -84,7 +117,7 @@ export function focusTrap(node) {
 			return;
 		}
 
-		let currentlyFocusedIndex = allFocusableItems.indexOf(currentlyFocusedItem);
+		const currentlyFocusedIndex = allFocusableItems.indexOf(currentlyFocusedItem);
 
 		// If we have focus on the first one, wrap to the end one.
 		if (currentlyFocusedIndex === 0) {
