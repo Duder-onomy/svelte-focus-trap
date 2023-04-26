@@ -2,21 +2,33 @@ import Mousetrap from 'mousetrap';
 
 interface MiddlewareContext {
 	event: Event;
+	allFocusableItems: HTMLElement[];
+	currentlyFocusedItem: HTMLElement | undefined;
 }
 
-function runInSeries(tasks) {
-	return (...initialArgs) => {
+function runInSeries(
+	tasks: (
+		| ((args0: Event) => MiddlewareContext)
+		| ((arg0: MiddlewareContext) => MiddlewareContext)
+		| ((arg0: MiddlewareContext) => void)
+	)[]
+): () => void {
+	return (...initialArgs: unknown[]) => {
 		return tasks.reduce((memo, task) => (memo = [...[task(...memo)]]), initialArgs || []);
 	};
 }
 
-function elementIsVisible(element: HTMLElement) {
+function elementIsVisible(element: HTMLElement): boolean {
 	const computedStyle = document?.defaultView?.getComputedStyle(element, null);
 
-	return (
-		computedStyle.getPropertyValue('display') !== 'none' &&
-		computedStyle.getPropertyValue('visibility') !== 'hidden'
-	);
+	if (computedStyle) {
+		return (
+			computedStyle.getPropertyValue('display') !== 'none' &&
+			computedStyle.getPropertyValue('visibility') !== 'hidden'
+		);
+	}
+
+	return false;
 }
 
 // A list of selectors to select all known focusable elements
@@ -32,9 +44,9 @@ const FOCUSABLE_ELEMENTS = [
 	'embed',
 	'[contenteditable]',
 	'[tabindex]:not([tabindex^="-"])'
-];
+].join(',');
 
-export function focusTrap(node: HTMLElement) {
+export default function focusTrap(node: HTMLElement) {
 	const keyboardShortcuts = {
 		'alt+tab': previous,
 		end: focusLastItem,
@@ -45,11 +57,16 @@ export function focusTrap(node: HTMLElement) {
 		up: previous
 	};
 
+	// By default, Mousetrap will suppress events while you are focused in an input/textarea etc.
+	Mousetrap.stopCallback = function () {
+		return false;
+	};
+
 	Object.entries(keyboardShortcuts).forEach(([keys, handler]) => {
 		Mousetrap.bind(
 			keys,
 			runInSeries([
-				(event: Event) => ({ event }),
+				(event: Event) => ({ event, allFocusableItems: [], currentlyFocusedItem: undefined }),
 				preventDefault,
 				stopPropagation,
 				getAllFocusableChildren,
@@ -59,28 +76,31 @@ export function focusTrap(node: HTMLElement) {
 		);
 	});
 
-	function preventDefault(context: MiddlewareContext) {
+	function preventDefault(context: MiddlewareContext): MiddlewareContext {
 		context.event.preventDefault();
 		return context;
 	}
 
-	function stopPropagation(context: MiddlewareContext) {
+	function stopPropagation(context: MiddlewareContext): MiddlewareContext {
 		context.event.stopPropagation();
 		return context;
 	}
 
-	function getAllFocusableChildren(context: MiddlewareContext) {
-		const focusables = [...node.querySelectorAll(FOCUSABLE_ELEMENTS)]; // NodeList to Array
+	function getAllFocusableChildren(context: MiddlewareContext): MiddlewareContext {
+		const focusables = [...node.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS)]; // NodeList to Array
+
+		console.log(focusables);
 		return {
 			...context,
-			allFocusableItems: focusables.filter(elementIsVisible)
+			allFocusableItems: focusables.filter((element) => elementIsVisible(element))
 		};
 	}
 
-	function getCurrentlyFocusedItem(context: MiddlewareContext) {
-		const currentlyFocusedItem = document.activeElement;
+	function getCurrentlyFocusedItem(context: MiddlewareContext): MiddlewareContext {
+		const currentlyFocusedItem = document.activeElement as HTMLElement;
 
 		if (currentlyFocusedItem && !node.contains(currentlyFocusedItem)) {
+			console.log('SO.... we got here... how?');
 			return context;
 		}
 
@@ -90,8 +110,9 @@ export function focusTrap(node: HTMLElement) {
 		};
 	}
 
-	function next({ allFocusableItems, currentlyFocusedItem }) {
-		// if focus is not within the focuables, focus the first one.
+	function next({ allFocusableItems, currentlyFocusedItem }: MiddlewareContext): void {
+		console.log('NEXT');
+		// if focus is not within the focusables, focus the first one.
 		if (!currentlyFocusedItem) {
 			allFocusableItems[0] && allFocusableItems[0].focus();
 			return;
@@ -110,7 +131,8 @@ export function focusTrap(node: HTMLElement) {
 			allFocusableItems[currentlyFocusedIndex + 1].focus();
 	}
 
-	function previous({ allFocusableItems, currentlyFocusedItem }) {
+	function previous({ allFocusableItems, currentlyFocusedItem }: MiddlewareContext): void {
+		console.log('PREVIOUS');
 		// If focus is not within the focusables, focus the last one
 		if (!currentlyFocusedItem) {
 			allFocusableItems[allFocusableItems.length - 1].focus();
@@ -131,11 +153,11 @@ export function focusTrap(node: HTMLElement) {
 			allFocusableItems[currentlyFocusedIndex - 1].focus();
 	}
 
-	function focusFirstItem({ allFocusableItems }) {
+	function focusFirstItem({ allFocusableItems }: MiddlewareContext) {
 		allFocusableItems[0] && allFocusableItems[0].focus();
 	}
 
-	function focusLastItem({ allFocusableItems }) {
+	function focusLastItem({ allFocusableItems }: MiddlewareContext) {
 		allFocusableItems[allFocusableItems.length - 1].focus();
 	}
 
