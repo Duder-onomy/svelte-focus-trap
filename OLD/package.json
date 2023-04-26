@@ -1,0 +1,37 @@
+{
+  "name": "svelte-focus-trap",
+  "version": "1.2.0",
+  "description": "A svelte directive that will trap and wrap focus within an element.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "svelte": "src/index.js",
+  "types": "svelte-focus-trap.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Greg Larrenaga",
+    "url": "https://github.com/Duder-onomy"
+  },
+  "homepage": "https://github.com/Duder-onomy/svelte-focus-trap",
+  "repository": "github:Duder-onomy/svelte-focus-trap",
+  "license": "MIT",
+  "dependencies": {
+    "mousetrap": "^1.6.5"
+  },
+  "devDependencies": {
+    "eslint": "^7.4.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-svelte3": "^2.7.3",
+    "rollup": "^2.21.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-svelte": "^5.2.3",
+    "svelte": "^3.24.0"
+  }
+}

@@ -1,58 +1,58 @@
-# svelte-focus-trap
+# create-svelte
 
-![npm](https://img.shields.io/npm/v/svelte-focus-trap)
+Everything you need to build a Svelte library, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
-A svelte directive that will trap focus within an element.
-You can navigate child focusable elements with up, down, tab, shift + tab, alt + tab. I have attempted to match the accesibility best practices listed [here](https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.html).
+Read more about creating a library [in the docs](https://kit.svelte.dev/docs/packaging).
 
-This could be useful if you wanted to trap focus within something like a modal. When you gotta... focus-trap and focus-wrap.
+## Creating a project
 
-* Does not auto focus the first item.
-  <!-- * Scope this [auto-focus modifier](https://github.com/qonto/ember-autofocus-modifier) out if you need that. -->
-* When pressing `down` or `tab`:
-  * When the known focusables are not focused, gives focus to the first item.
-  * If focus is on the last known focusable, it gives focus to the first item.
-  * Gives focus to the next item.
-* When pressing `up` or `shift+tab` or `alt+tab`:
-  * When the known focusables are not focused, gives focus to the last item.
-  * If focus is on the first known focuable, it gives focus to the last item.
-  * Gives focus to the previous item.
-* When pressing `home`:
-  * Gives focus to the first item.
-* When pressing `end`:
-  * Gives focus to the last item.
-* Attempts to skip hidden items and items with display none of tabindex="-1".
+If you're seeing this, you've probably already done this step. Congrats!
 
+```bash
+# create a new project in the current directory
+npm create svelte@latest
 
-Todos:
-- [ ] Demo
-- [ ] Tests + Ci
-
-Installation
-------------------------------------------------------------------------------
-
-```
-npm install --save-dev svelte-focus-trap
+# create a new project in my-app
+npm create svelte@latest my-app
 ```
 
-Usage
-------------------------------------------------------------------------------
+## Developing
 
-```html
-<script>
-  import { focusTrap } from 'svelte-focus-trap'
-</script>
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-{#if showing}
-  <div
-    use:focusTrap
-  > 
-    <!-- ...modal contents -->
-  </div>
-{/if}
+```bash
+npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
 ```
 
-License
-------------------------------------------------------------------------------
+Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
 
-This project is licensed under the [MIT License](LICENSE.md).
+## Building
+
+To build your library:
+
+```bash
+npm run package
+```
+
+To create a production version of your showcase app:
+
+```bash
+npm run build
+```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+## Publishing
+
+Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
+
+To publish your library to [npm](https://www.npmjs.com):
+
+```bash
+npm publish
+```
