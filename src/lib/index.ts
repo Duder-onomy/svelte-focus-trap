@@ -1,4 +1,4 @@
-import Mousetrap from 'mousetrap';
+import hotkeys from 'hotkeys-js';
 
 interface MiddlewareContext {
 	event: Event;
@@ -58,22 +58,23 @@ export default function focusTrap(node: HTMLElement) {
 	};
 
 	// By default, Mousetrap will suppress events while you are focused in an input/textarea etc.
-	Mousetrap.stopCallback = function () {
-		return false;
-	};
+	// Mousetrap.stopCallback = function () {
+	// 	console.log('WAS THIS CALLED');
+	// 	return false;
+	// };
 
 	Object.entries(keyboardShortcuts).forEach(([keys, handler]) => {
-		Mousetrap.bind(
-			keys,
-			runInSeries([
-				(event: Event) => ({ event, allFocusableItems: [], currentlyFocusedItem: undefined }),
-				preventDefault,
-				stopPropagation,
-				getAllFocusableChildren,
-				getCurrentlyFocusedItem,
-				handler
-			])
-		);
+    hotkeys(
+      keys,
+      runInSeries([
+        (event: Event) => ({ event, allFocusableItems: [], currentlyFocusedItem: undefined }),
+        preventDefault,
+        stopPropagation,
+        getAllFocusableChildren,
+        getCurrentlyFocusedItem,
+        handler
+      ])
+    );
 	});
 
 	function preventDefault(context: MiddlewareContext): MiddlewareContext {
@@ -163,7 +164,7 @@ export default function focusTrap(node: HTMLElement) {
 
 	return {
 		destroy() {
-			Object.keys(keyboardShortcuts).forEach((key) => Mousetrap.unbind(key));
+			Object.keys(keyboardShortcuts).forEach((key) => hotkeys.unbind(key));
 		}
 	};
 }

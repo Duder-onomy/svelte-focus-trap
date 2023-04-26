@@ -34,7 +34,7 @@
     "!dist/**/*.spec.*"
   ],
   "dependencies": {
-    "mousetrap": "^1.6.5"
+    "hotkeys-js": "^3.10.2",
   },
   "peerDependencies": {
     "svelte": "^3.54.0"
@@ -44,7 +44,6 @@
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/kit": "^1.5.0",
     "@sveltejs/package": "^2.0.0",
-    "@types/mousetrap": "^1.6.11",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
     "eslint": "^8.28.0",
