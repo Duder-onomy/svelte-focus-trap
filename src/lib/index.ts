@@ -1,4 +1,4 @@
-import hotkeys from 'hotkeys-js';
+import bind from 'bind-decorator';
 
 interface MiddlewareContext {
 	event: Event;
@@ -47,61 +47,73 @@ const FOCUSABLE_ELEMENTS = [
 ].join(',');
 
 export default function focusTrap(node: HTMLElement) {
-	const keyboardShortcuts = {
-		'alt+tab': previous,
-		end: focusLastItem,
-		home: focusFirstItem,
-		'shift+tab': previous,
-		down: next,
-		tab: next,
-		up: previous
+	const focusTrap = new FocusTrap(node);
+
+	return {
+		destroy() {
+			focusTrap.destroy();
+		}
+	};
+}
+
+class FocusTrap {
+	_hotkeyManager;
+	_node;
+
+	keyboardShortcuts = {
+		'alt+tab': this.wrapContext(this.previous),
+		end: this.wrapContext(this.focusLastItem),
+		home: this.wrapContext(this.focusFirstItem),
+		'shift+tab': this.wrapContext(this.previous),
+		tab: this.wrapContext(this.next),
+		arrowdown: this.wrapContext(this.next),
+		arrowup: this.wrapContext(this.previous)
 	};
 
-	// By default, Mousetrap will suppress events while you are focused in an input/textarea etc.
-	// Mousetrap.stopCallback = function () {
-	// 	console.log('WAS THIS CALLED');
-	// 	return false;
-	// };
+	constructor(node: HTMLElement) {
+		this._node = node;
+		this._hotkeyManager = new HotkeyManager(node, this.keyboardShortcuts);
+	}
 
-	Object.entries(keyboardShortcuts).forEach(([keys, handler]) => {
-    hotkeys(
-      keys,
-      runInSeries([
-        (event: Event) => ({ event, allFocusableItems: [], currentlyFocusedItem: undefined }),
-        preventDefault,
-        stopPropagation,
-        getAllFocusableChildren,
-        getCurrentlyFocusedItem,
-        handler
-      ])
-    );
-	});
+	@bind
+	private wrapContext(handler: (arg0: MiddlewareContext) => void) {
+		return runInSeries([
+			(event: Event) => ({ event, allFocusableItems: [], currentlyFocusedItem: undefined }),
+			this.preventDefault,
+			this.stopPropagation,
+			this.getAllFocusableChildren,
+			this.getCurrentlyFocusedItem,
+			handler
+		]);
+	}
 
-	function preventDefault(context: MiddlewareContext): MiddlewareContext {
+	@bind
+	private preventDefault(context: MiddlewareContext): MiddlewareContext {
 		context.event.preventDefault();
 		return context;
 	}
 
-	function stopPropagation(context: MiddlewareContext): MiddlewareContext {
+	@bind
+	private stopPropagation(context: MiddlewareContext): MiddlewareContext {
 		context.event.stopPropagation();
 		return context;
 	}
 
-	function getAllFocusableChildren(context: MiddlewareContext): MiddlewareContext {
-		const focusables = [...node.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS)]; // NodeList to Array
+	@bind
+	private getAllFocusableChildren(context: MiddlewareContext): MiddlewareContext {
+		const focusables = [...this._node.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS)]; // NodeList to Array
 
-		console.log(focusables);
 		return {
 			...context,
 			allFocusableItems: focusables.filter((element) => elementIsVisible(element))
 		};
 	}
 
-	function getCurrentlyFocusedItem(context: MiddlewareContext): MiddlewareContext {
+	@bind
+	private getCurrentlyFocusedItem(context: MiddlewareContext): MiddlewareContext {
 		const currentlyFocusedItem = document.activeElement as HTMLElement;
 
-		if (currentlyFocusedItem && !node.contains(currentlyFocusedItem)) {
-			console.log('SO.... we got here... how?');
+		if (currentlyFocusedItem && !this._node.contains(currentlyFocusedItem)) {
 			return context;
 		}
 
@@ -111,8 +123,7 @@ export default function focusTrap(node: HTMLElement) {
 		};
 	}
 
-	function next({ allFocusableItems, currentlyFocusedItem }: MiddlewareContext): void {
-		console.log('NEXT');
+	next({ allFocusableItems, currentlyFocusedItem }: MiddlewareContext): void {
 		// if focus is not within the focusables, focus the first one.
 		if (!currentlyFocusedItem) {
 			allFocusableItems[0] && allFocusableItems[0].focus();
@@ -132,8 +143,7 @@ export default function focusTrap(node: HTMLElement) {
 			allFocusableItems[currentlyFocusedIndex + 1].focus();
 	}
 
-	function previous({ allFocusableItems, currentlyFocusedItem }: MiddlewareContext): void {
-		console.log('PREVIOUS');
+	previous({ allFocusableItems, currentlyFocusedItem }: MiddlewareContext): void {
 		// If focus is not within the focusables, focus the last one
 		if (!currentlyFocusedItem) {
 			allFocusableItems[allFocusableItems.length - 1].focus();
@@ -154,17 +164,84 @@ export default function focusTrap(node: HTMLElement) {
 			allFocusableItems[currentlyFocusedIndex - 1].focus();
 	}
 
-	function focusFirstItem({ allFocusableItems }: MiddlewareContext) {
+	focusFirstItem({ allFocusableItems }: MiddlewareContext) {
 		allFocusableItems[0] && allFocusableItems[0].focus();
 	}
 
-	function focusLastItem({ allFocusableItems }: MiddlewareContext) {
+	focusLastItem({ allFocusableItems }: MiddlewareContext) {
 		allFocusableItems[allFocusableItems.length - 1].focus();
 	}
 
-	return {
-		destroy() {
-			Object.keys(keyboardShortcuts).forEach((key) => hotkeys.unbind(key));
-		}
-	};
+	destroy() {
+		this._hotkeyManager.destroy();
+	}
+}
+
+class HotkeyManager {
+	_node;
+	_hotkeyMap;
+
+	constructor(node: HTMLElement, hotkeyMap: { [key: string]: (arg0: KeyboardEvent) => void }) {
+		this._node = node;
+		this._hotkeyMap = Object.entries(hotkeyMap)
+			.map(([hotkey, handler]) => {
+				const [modifier, key] = hotkey.split('+');
+
+				return {
+					modifier: key && modifier,
+					key: key ? key : modifier,
+					handler
+				};
+			})
+			.sort((a, b) => {
+				if (a.modifier && b.modifier && a.key === b.key) {
+					return a.modifier.localeCompare(b.modifier);
+				}
+
+				if (a.modifier && !b.modifier && a.key === b.key) {
+					return -1;
+				}
+
+				if (!a.modifier && b.modifier && a.key === b.key) {
+					return 1;
+				}
+
+				if (!a.modifier && !b.modifier) {
+					return a.key.localeCompare(b.key);
+				}
+
+				return 1;
+			});
+
+		this.setup();
+	}
+
+	@bind
+	private setup() {
+		document.addEventListener('keydown', this.handler);
+	}
+
+	@bind
+	public destroy() {
+		document.removeEventListener('keydown', this.handler);
+	}
+
+	@bind
+	private handler(e: KeyboardEvent) {
+		this._hotkeyMap.every(({ key, modifier, handler }) => {
+			if (e.key.toLowerCase() === key) {
+				if (modifier) {
+					if (modifier === 'shift' && e.shiftKey) {
+						handler(e);
+						return false;
+					}
+					return true;
+				} else {
+					handler(e);
+					return false;
+				}
+			}
+			return true;
+		});
+	}
 }

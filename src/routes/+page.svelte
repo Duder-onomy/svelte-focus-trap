@@ -18,5 +18,14 @@
 		<button>Things</button>
 
 		<button>that can take focus</button>
+
+		<a href="#">A link</a>
+
+		<select>
+			<option>1</option>
+			<option>2</option>
+		</select>
+
+		<div tabindex="1" />
 	</fieldset>
 </div>

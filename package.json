@@ -34,7 +34,7 @@
     "!dist/**/*.spec.*"
   ],
   "dependencies": {
-    "hotkeys-js": "^3.10.2",
+    "bind-decorator": "^1.0.11"
   },
   "peerDependencies": {
     "svelte": "^3.54.0"
