@@ -43,6 +43,10 @@ npm install --save-dev svelte-focus-trap
 {/if}
 ```
 
+## What gets selected?
+
+In addition to selecting anything that matches THIS CSS SELECTOR, we will also skip the element if it is not visible, as determined by THIS method.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE.md).
