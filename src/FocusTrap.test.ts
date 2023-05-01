@@ -137,159 +137,169 @@ describe('FocusTrap Class', () => {
 		}
 
 		describe('buttons', () => {
-      it('simple button', () => {
-        const button = document.createElement('button');
-        assertSelected(button);
-      });
+			it('simple button', () => {
+				const button = document.createElement('button');
+				assertSelected(button);
+			});
 
-      it('disabled button', () => {
-        const button = document.createElement('button');
-        button.disabled = true;
-        assertNotSelected(button);
-      });
+			it('disabled button', () => {
+				const button = document.createElement('button');
+				button.disabled = true;
+				assertNotSelected(button);
+			});
 
-      it('aria-hidden button', () => {
-        const button = document.createElement('button');
-        button.setAttribute('aria-hidden', 'true');
-        assertNotSelected(button);
-      });
+			it('aria-hidden button', () => {
+				const button = document.createElement('button');
+				button.setAttribute('aria-hidden', 'true');
+				assertNotSelected(button);
+			});
 		});
 
 		describe('inputs', () => {
-      it('simple input', () => {
-        const input = document.createElement('input');
-        assertSelected(input);
-      });
+			it('simple input', () => {
+				const input = document.createElement('input');
+				assertSelected(input);
+			});
 
-      it('disabled input', () => {
-        const input = document.createElement('input');
-        input.disabled = true;
-        assertNotSelected(input);
-      });
+			it('disabled input', () => {
+				const input = document.createElement('input');
+				input.disabled = true;
+				assertNotSelected(input);
+			});
 
-      it('type=hidden input', () => {
-        const input = document.createElement('input');
-        input.setAttribute('type', 'hidden');
-        assertNotSelected(input);
-      });
+			it('type=hidden input', () => {
+				const input = document.createElement('input');
+				input.setAttribute('type', 'hidden');
+				assertNotSelected(input);
+			});
 
-      it('aria-hidden input', () => {
-        const input = document.createElement('input');
-        input.setAttribute('aria-hidden', 'true');
-        assertNotSelected(input);
-      });
+			it('aria-hidden input', () => {
+				const input = document.createElement('input');
+				input.setAttribute('aria-hidden', 'true');
+				assertNotSelected(input);
+			});
 		});
 
 		describe('anchors', () => {
-      it('with href', () => {
-        const element = document.createElement('a');
-        element.href = '/bingo';
-        assertSelected(element);
-      });
+			it('with href', () => {
+				const element = document.createElement('a');
+				element.href = '/bingo';
+				assertSelected(element);
+			});
 
-      it('without href', () => {
-        const element = document.createElement('a');
-        assertNotSelected(element);
-      });
+			it('without href', () => {
+				const element = document.createElement('a');
+				assertNotSelected(element);
+			});
 		});
 
 		describe('selects', () => {
-      it('simple select', () => {
-        const element = document.createElement('select');
-        assertSelected(element);
-      });
+			it('simple select', () => {
+				const element = document.createElement('select');
+				assertSelected(element);
+			});
 
-      it('disabled select', () => {
-        const element = document.createElement('select');
-        element.disabled = true;
-        assertNotSelected(element);
-      });
+			it('disabled select', () => {
+				const element = document.createElement('select');
+				element.disabled = true;
+				assertNotSelected(element);
+			});
 
-      it('aria-hidden select', () => {
-        const element = document.createElement('select');
-        element.setAttribute('aria-hidden', 'true');
-        assertNotSelected(element);
-      });
+			it('aria-hidden select', () => {
+				const element = document.createElement('select');
+				element.setAttribute('aria-hidden', 'true');
+				assertNotSelected(element);
+			});
 		});
 
 		describe('area', () => {
-      it('with href', () => {
-        const element = document.createElement('area');
-        element.href = '/bingo';
-        assertSelected(element);
-      });
+			it('with href', () => {
+				const element = document.createElement('area');
+				element.href = '/bingo';
+				assertSelected(element);
+			});
 
-      it('without href', () => {
-        const element = document.createElement('area');
-        assertNotSelected(element);
-      });
+			it('without href', () => {
+				const element = document.createElement('area');
+				assertNotSelected(element);
+			});
 		});
 
 		describe('textarea', () => {
-      it('simple textarea', () => {
-        const element = document.createElement('textarea');
-        assertSelected(element);
-      });
+			it('simple textarea', () => {
+				const element = document.createElement('textarea');
+				assertSelected(element);
+			});
 
-      it('disabled textarea', () => {
-        const element = document.createElement('textarea');
-        element.disabled = true;
-        assertNotSelected(element);
-      });
+			it('disabled textarea', () => {
+				const element = document.createElement('textarea');
+				element.disabled = true;
+				assertNotSelected(element);
+			});
 
-      it('aria-hidden textarea', () => {
-        const element = document.createElement('textarea');
-        element.setAttribute('aria-hidden', 'true');
-        assertNotSelected(element);
-      });
+			it('aria-hidden textarea', () => {
+				const element = document.createElement('textarea');
+				element.setAttribute('aria-hidden', 'true');
+				assertNotSelected(element);
+			});
 		});
 
 		describe('iframe', () => {
 			it('simple iframe', () => {
-        const element = document.createElement('iframe');
-        assertSelected(element);
-      });
+				const element = document.createElement('iframe');
+				assertSelected(element);
+			});
 		});
 
 		describe('object', () => {
 			it('simple object', () => {
-        const element = document.createElement('object');
-        assertSelected(element);
-      });
+				const element = document.createElement('object');
+				assertSelected(element);
+			});
 		});
 
 		describe('embed', () => {
 			it('simple embed', () => {
-        const element = document.createElement('embed');
-        assertSelected(element);
-      });
+				const element = document.createElement('embed');
+				assertSelected(element);
+			});
 		});
 
 		describe('contenteditable', () => {
 			it('simple contenteditable', () => {
-        const element = document.createElement('div');
-        element.setAttribute('contenteditable', true);
-        assertSelected(element);
-      });
+				const element = document.createElement('div');
+				element.setAttribute('contenteditable', true);
+				assertSelected(element);
+			});
 		});
 
-		describe('anything with a positive tabindex', () => {
-      it('positive', () => {
-        const element = document.createElement('div');
-        element.tabindex = 0;
-        assertSelected(element);
-      });
+		describe('tabindex', () => {
+			it('positive', () => {
+				const element = document.createElement('div');
+				element.tabIndex = 1;
+				assertSelected(element);
+			});
 
-      it('negative', () => {
-        const element = document.createElement('div');
-        element.tabindex = -1;
-        assertNotSelected(element);
-      });
+			it('negative', () => {
+				const element = document.createElement('div');
+				element.tabIndex = -1;
+				assertNotSelected(element);
+			});
 		});
-	});
 
-	it('ignores elements that are not visible', () => {
-		// test the elementIsVisible util
+		describe('ignores elements that are not visible', () => {
+			it('display: none', () => {
+				const element = document.createElement('div');
+				element.style.display = 'none';
+				assertNotSelected(element);
+			});
+
+			it('visibility: hidden', () => {
+				const element = document.createElement('div');
+				element.style.visibility = 'hidden';
+				assertNotSelected(element);
+			});
+		});
 	});
 
 	describe('keys', () => {
