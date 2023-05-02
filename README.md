@@ -51,6 +51,8 @@ In addition to selecting anything that matches THIS CSS SELECTOR, we will also s
 
 This project is licensed under the [MIT License](LICENSE.md).
 
+--
+
 # Everything here is from the sveltekit library generator.
 
 ---
