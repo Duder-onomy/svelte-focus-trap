@@ -1,5 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import sinon from 'sinon';
+import { describe, it, expect, beforeEach } from 'vitest';
 import FocusTrap from '$lib/FocusTrap.js';
 
 describe('FocusTrap Class', () => {
@@ -10,14 +9,17 @@ describe('FocusTrap Class', () => {
 
 		const focusableButton = document.createElement('button');
 		focusableButton.dataset.selector = 'first-button';
+		focusableButton.dataset.order = 'first';
 		wrapper.appendChild(focusableButton);
 
 		const focusableInput = document.createElement('input');
 		focusableInput.dataset.selector = 'first-input';
+		focusableButton.dataset.order = 'second';
 		wrapper.appendChild(focusableInput);
 
 		const focusableAnchor = document.createElement('a');
 		focusableAnchor.dataset.selector = 'first-anchor';
+		focusableButton.dataset.order = 'third';
 		wrapper.appendChild(focusableAnchor);
 
 		document.body.appendChild(wrapper);
@@ -303,12 +305,134 @@ describe('FocusTrap Class', () => {
 	});
 
 	describe('keys', () => {
-		it('tab, goes to the next focusable', () => {});
-		it('alt+tab, goes to the previous focusable', () => {});
-		it('shift+tab, goes to the previous focusable', () => {});
-		it('end, goes to the last focusable', () => {});
-		it('home, goes to the first focusable', () => {});
-		it('arrowdown, goes to the next focusable', () => {});
-		it('arrowup, goes to the previous focusable', () => {});
+		it('tab, goes to the next focusable', () => {
+			(document.querySelector('[data-order="first"]') as HTMLButtonElement)?.focus();
+
+			const element = document.querySelector('#element-to-test');
+			new FocusTrap(element as HTMLElement);
+
+			const tabKeyEvent = new KeyboardEvent('keydown', { key: 'tab' });
+			window.dispatchEvent(tabKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-order="second"]')));
+
+			window.dispatchEvent(tabKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-selector="third"]')));
+
+			window.dispatchEvent(tabKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-order="first"]')));
+		});
+
+		it('alt+tab, goes to the previous focusable', () => {
+			(document.querySelector('[data-order="first"]') as HTMLButtonElement)?.focus();
+
+			const element = document.querySelector('#element-to-test');
+			new FocusTrap(element as HTMLElement);
+
+			const altTabKeyEvent = new KeyboardEvent('keydown', { key: 'tab', altKey: true });
+			window.dispatchEvent(altTabKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-order="third"]')));
+
+			window.dispatchEvent(altTabKeyEvent);
+
+			expect(
+				document.activeElement?.isSameNode(document.querySelector('[data-selector="second"]'))
+			);
+
+			window.dispatchEvent(altTabKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-order="first"]')));
+		});
+
+		it('shift+tab, goes to the previous focusable', () => {
+			const element = document.querySelector('#element-to-test');
+			new FocusTrap(element as HTMLElement);
+
+			(document.querySelector('[data-order="first"]') as HTMLButtonElement)?.focus();
+
+			const shiftTabKeyEvent = new KeyboardEvent('keydown', { key: 'tab', shiftKey: true });
+			window.dispatchEvent(shiftTabKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-order="third"]')));
+
+			window.dispatchEvent(shiftTabKeyEvent);
+
+			expect(
+				document.activeElement?.isSameNode(document.querySelector('[data-selector="second"]'))
+			);
+
+			window.dispatchEvent(shiftTabKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-order="first"]')));
+		});
+
+		it('end, goes to the last focusable', () => {
+			const element = document.querySelector('#element-to-test');
+			new FocusTrap(element as HTMLElement);
+
+			(document.querySelector('[data-order="first"]') as HTMLButtonElement)?.focus();
+
+			const endKeyEvent = new KeyboardEvent('keydown', { key: 'end' });
+			window.dispatchEvent(endKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-order="third"]')));
+		});
+
+		it('home, goes to the first focusable', () => {
+			const element = document.querySelector('#element-to-test');
+			new FocusTrap(element as HTMLElement);
+
+			(document.querySelector('[data-order="third"]') as HTMLButtonElement)?.focus();
+
+			const endKeyEvent = new KeyboardEvent('keydown', { key: 'home' });
+			window.dispatchEvent(endKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-order="first"]')));
+		});
+
+		it('arrowup, goes to the next focusable', () => {
+			const element = document.querySelector('#element-to-test');
+			new FocusTrap(element as HTMLElement);
+
+			(document.querySelector('[data-order="first"]') as HTMLButtonElement)?.focus();
+
+			const arrowUpKeyEvent = new KeyboardEvent('keydown', { key: 'arrowup' });
+			window.dispatchEvent(arrowUpKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-order="third"]')));
+
+			window.dispatchEvent(arrowUpKeyEvent);
+
+			expect(
+				document.activeElement?.isSameNode(document.querySelector('[data-selector="second"]'))
+			);
+
+			window.dispatchEvent(arrowUpKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-order="first"]')));
+		});
+
+		it('arrowdown, goes to the previous focusable', () => {
+			(document.querySelector('[data-order="first"]') as HTMLButtonElement)?.focus();
+
+			const element = document.querySelector('#element-to-test');
+			new FocusTrap(element as HTMLElement);
+
+			const arrowDownKeyEvent = new KeyboardEvent('keydown', { key: 'arrowdown' });
+			window.dispatchEvent(arrowDownKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-order="second"]')));
+
+			window.dispatchEvent(arrowDownKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-selector="third"]')));
+
+			window.dispatchEvent(arrowDownKeyEvent);
+
+			expect(document.activeElement?.isSameNode(document.querySelector('[data-order="first"]')));
+		});
 	});
 });

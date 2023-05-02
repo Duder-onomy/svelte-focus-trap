@@ -118,7 +118,7 @@ export default class FocusTrap {
 	next({ allFocusableItems, currentlyFocusedItem }: MiddlewareContext): void {
 		// if focus is not within the focusables, focus the first one.
 		if (!currentlyFocusedItem) {
-			allFocusableItems[0] && allFocusableItems[0].focus();
+			allFocusableItems[0]?.focus();
 			return;
 		}
 
@@ -126,19 +126,18 @@ export default class FocusTrap {
 
 		// If we have focus on the last one, give focus on the first.
 		if (allFocusableItems.length - 1 === currentlyFocusedIndex) {
-			allFocusableItems[0] && allFocusableItems[0].focus();
+			allFocusableItems[0]?.focus();
 			return;
 		}
 
 		// Focus the next one.
-		allFocusableItems[currentlyFocusedIndex + 1] &&
-			allFocusableItems[currentlyFocusedIndex + 1].focus();
+		allFocusableItems[currentlyFocusedIndex + 1]?.focus();
 	}
 
 	previous({ allFocusableItems, currentlyFocusedItem }: MiddlewareContext): void {
 		// If focus is not within the focusables, focus the last one
 		if (!currentlyFocusedItem) {
-			allFocusableItems[allFocusableItems.length - 1].focus();
+			allFocusableItems[allFocusableItems.length - 1]?.focus();
 			return;
 		}
 
@@ -146,22 +145,20 @@ export default class FocusTrap {
 
 		// If we have focus on the first one, wrap to the end one.
 		if (currentlyFocusedIndex === 0) {
-			allFocusableItems[allFocusableItems.length - 1] &&
-				allFocusableItems[allFocusableItems.length - 1].focus();
+			allFocusableItems[allFocusableItems?.length - 1]?.focus();
 			return;
 		}
 
 		// Focus the previous one.
-		allFocusableItems[currentlyFocusedIndex - 1] &&
-			allFocusableItems[currentlyFocusedIndex - 1].focus();
+		allFocusableItems[currentlyFocusedIndex - 1]?.focus();
 	}
 
 	focusFirstItem({ allFocusableItems }: MiddlewareContext) {
-		allFocusableItems[0] && allFocusableItems[0].focus();
+		allFocusableItems[0]?.focus();
 	}
 
 	focusLastItem({ allFocusableItems }: MiddlewareContext) {
-		allFocusableItems[allFocusableItems.length - 1].focus();
+		allFocusableItems[allFocusableItems.length - 1]?.focus();
 	}
 
 	destroy() {
