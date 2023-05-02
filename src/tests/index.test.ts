@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import focusTrap from './index.js';
+import focusTrap from '$lib/index.js';
 
 describe('Focustrap Svelte Directive', () => {
 	it('does nothing if not passed a element', () => {
