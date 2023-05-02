@@ -1,0 +1,19 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.16.0
+        cache: 'npm'
+    - run: npm run test:unit
