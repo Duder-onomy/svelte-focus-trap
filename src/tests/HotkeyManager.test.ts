@@ -21,7 +21,7 @@ describe('Hotkey Manager Class', () => {
 		hotkeyInstance.destroy();
 	});
 
-	it('will not call nothing when given no matching keys', () => {
+	it('will call nothing when given no matching keys', () => {
 		const handler = sinon.fake();
 
 		const hotkeyInstance = new HotkeyManager({
