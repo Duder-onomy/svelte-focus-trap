@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, test } from 'vitest';
+import { describe, it, expect, test } from 'vitest';
 import sinon from 'sinon';
 import HotkeyManager from '$lib/HotkeyManager.js';
 

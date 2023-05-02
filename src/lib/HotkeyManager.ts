@@ -39,12 +39,12 @@ export default class HotkeyManager {
 
 	@bind
 	private setup() {
-		window.addEventListener('keydown', this.handler);
+		window.addEventListener?.('keydown', this.handler);
 	}
 
 	@bind
 	public destroy() {
-		window.removeEventListener('keydown', this.handler);
+		window.removeEventListener?.('keydown', this.handler);
 	}
 
 	@bind
